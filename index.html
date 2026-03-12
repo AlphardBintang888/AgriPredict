@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriPredict - Dashboard UMKM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-header" style="flex-direction: column; align-items: flex-start; gap: 5px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-leaf"></i> AgriPredict
+            </div>
+            <span
+                style="font-size: 10px; color: var(--text-light); font-weight: 400; padding: 2px 6px; background: #f1f5f9; border-radius: 4px; border: 1px solid #e2e8f0;">
+                <i class="fa-brands fa-laravel" style="color: #ef4444;"></i> B2B Portal by Laravel
+            </span>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item active" data-target="dashboard-view"><i class="fa-solid fa-chart-pie"></i> Dashboard B2B
+            </li>
+            <li class="nav-item" data-target="analitik-view"><i class="fa-solid fa-chart-line"></i> Analitik Prediksi
+            </li>
+            <li class="nav-item" data-target="pasar-view"><i class="fa-solid fa-store"></i> Pasar Komoditas</li>
+            <li class="nav-item" data-target="berita-view"><i class="fa-regular fa-newspaper"></i> Berita Agrikultur</li>
+            <li class="nav-item" data-target="profil-view"><i class="fa-solid fa-user-gear"></i> Pengaturan Profil</li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header class="header">
+            <div class="search-bar">
+                <span style="color: var(--text-light); font-size: 14px;" id="current-date">📅 Memuat tanggal...</span>
+            </div>
+            <div class="user-profile" id="user-profile-btn" style="cursor: pointer;" title="Buka Pengaturan Profil">
+                <i class="fa-regular fa-bell"
+                    style="font-size: 20px; margin-right: 15px; color: var(--text-light);"></i>
+                <div class="avatar">UM</div>
+                <span id="display-nama-umkm">Sambal Bu Rudy (UMKM)</span>
+            </div>
+        </header>
+
+        <section id="dashboard-view" class="view-section active">
+            <h1 class="page-title">Ringkasan Eksekutif</h1>
+
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-info">
+                        <h3>Potensi Kenaikan Harga (Cabai)</h3>
+                        <div class="value" style="color: #dc2626;">+15.4% <i class="fa-solid fa-arrow-trend-up"
+                                style="font-size: 16px;"></i></div>
+                    </div>
+                    <div class="kpi-icon icon-orange"><i class="fa-solid fa-pepper-hot"></i></div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-info">
+                        <h3>Penghematan Estimasi</h3>
+                        <div class="value">Rp 2.450.000</div>
+                    </div>
+                    <div class="kpi-icon icon-green"><i class="fa-solid fa-wallet"></i></div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-info">
+                        <h3>Kontrak Pasokan Aktif</h3>
+                        <div class="value"><span id="kontrak-count">4</span> Petani Mitra</div>
+                    </div>
+                    <div class="kpi-icon icon-blue"><i class="fa-solid fa-handshake"></i></div>
+                </div>
+            </div>
+
+            <div class="content-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Prediksi Harga Cabai (Holt-Winters)</h2>
+                        <select id="time-filter">
+                            <option value="10">10 Hari Kedepan</option>
+                            <option value="5">5 Hari Kedepan</option>
+                        </select>
+                    </div>
+                    <canvas id="predictionChart" height="120"></canvas>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Rekomendasi Smart-Matching</h2>
+                    </div>
+                    <p style="font-size: 13px; color: var(--text-light); margin-bottom: 15px;">
+                        Sistem mendeteksi panen raya minggu depan. Amankan pasokan Anda sekarang.
+                    </p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Mitra</th>
+                                <th>Komoditas</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <strong>Poktan Makmur</strong><br>
+                                    <span style="font-size: 12px; color: var(--text-light);">Est. Panen: 12 Mar</span>
+                                </td>
+                                <td>Cabai Merah<br><span class="badge badge-recommend">Rp 35k/kg</span></td>
+                                <td><button class="btn-action btn-preorder" data-petani="Poktan Makmur"
+                                        data-komoditas="Cabai Merah">Pre-Order</button></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Tani Jaya Abadi</strong><br>
+                                    <span style="font-size: 12px; color: var(--text-light);">Est. Panen: 15 Mar</span>
+                                </td>
+                                <td>Bawang Merah<br><span class="badge badge-recommend">Rp 22k/kg</span></td>
+                                <td><button class="btn-action btn-preorder" data-petani="Tani Jaya Abadi"
+                                        data-komoditas="Bawang Merah">Pre-Order</button></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Beras Cipinang</strong><br>
+                                    <span style="font-size: 12px; color: var(--text-light);">Est. Panen: 10 Mar</span>
+                                </td>
+                                <td>Beras<br><span class="badge badge-recommend">Rp 15k/kg</span></td>
+                                <td><button class="btn-action btn-preorder" data-petani="Beras Cipinang"
+                                        data-komoditas="Beras">Pre-Order</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="analitik-view" class="view-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h1 class="page-title" style="margin-bottom: 0;">Analitik Prediksi Lanjutan <span
+                        style="font-size: 12px; background: #e2e8f0; color: #475569; padding: 4px 8px; border-radius: 4px; vertical-align: middle; margin-left: 10px;"><i
+                            class="fa-brands fa-python"></i> Powered by Python REST API</span></h1>
+                <button class="btn-action"
+                    onclick="Swal.fire('Terhubung ke Python Engine', 'Berhasil melakukan sinkronisasi data harga PIHPS Nasional melalui endpoint REST API eksternal.', 'success')">
+                    <i class="fa-solid fa-cloud-arrow-down"></i> Sync via REST API
+                </button>
+            </div>
+
+            <!-- Accuracy Metrics -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-info">
+                        <h3>Akurasi Model (MAPE)</h3>
+                        <div class="value" style="color: var(--primary-dark);">94.8%</div>
+                    </div>
+                    <div class="kpi-icon icon-green"><i class="fa-solid fa-bullseye"></i></div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-info">
+                        <h3>Total Data Historis</h3>
+                        <div class="value">10,245 <span
+                                style="font-size: 14px; color: var(--text-light); font-weight: 400;">Entri</span></div>
+                    </div>
+                    <div class="kpi-icon icon-blue"><i class="fa-solid fa-database"></i></div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-info">
+                        <h3>Model Aktif</h3>
+                        <div class="value">Holt-Winters</div>
+                    </div>
+                    <div class="kpi-icon icon-orange"><i class="fa-solid fa-brain"></i></div>
+                </div>
+            </div>
+
+            <!-- Main Charts -->
+            <div class="content-grid" style="margin-bottom: 20px;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Perbandingan Historis vs Prediksi (3 Bulan Terakhir)</h2>
+                        <select id="komoditas-filter-analitik">
+                            <option value="cabai">Cabai Merah</option>
+                            <option value="bawang">Bawang Merah</option>
+                            <option value="beras">Beras</option>
+                        </select>
+                    </div>
+                    <canvas id="historicalChart" height="120"></canvas>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Konfigurasi Model</h2>
+                    </div>
+                    <form id="model-config-form" style="display: flex; flex-direction: column; gap: 15px;">
+                        <div>
+                            <label
+                                style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">Algoritma
+                                Prediksi</label>
+                            <select style="width: 100%;" id="algo-select">
+                                <option value="holt-winters">Holt-Winters Exponential Smoothing</option>
+                                <option value="arima">ARIMA (Autoregressive Integrated Moving Average)</option>
+                                <option value="lstm">LSTM Neural Network</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label
+                                style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">Rentang
+                                Historis Pengingat (Hari)</label>
+                            <input type="number" value="90" min="30" max="365"
+                                style="width: 100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; outline: none;">
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <button type="button" class="btn-action" style="width: 100%;" onclick="retrainModel()">
+                                <i class="fa-solid fa-gears"></i> Latih Ulang Model
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Detail Analysis Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Analisis Faktor Pembentuk Harga</h2>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Faktor Utama</th>
+                            <th>Bobot Pengaruh</th>
+                            <th>Status Saat Ini</th>
+                            <th>Tren Prediksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Curah Hujan (Cuaca)</td>
+                            <td>
+                                <div
+                                    style="width: 100%; background-color: var(--border-color); border-radius: 4px; height: 8px; margin-top: 5px; overflow: hidden;">
+                                    <div
+                                        style="width: 45%; background-color: #ef4444; height: 100%; border-radius: 4px;">
+                                    </div>
+                                </div>
+                                <span style="font-size: 12px; color: var(--text-light);">45%</span>
+                            </td>
+                            <td>Tinggi (Curah hujan ekstrim)</td>
+                            <td><span style="color: #ef4444;"><i class="fa-solid fa-arrow-trend-up"></i> Mendorong
+                                    Harga</span></td>
+                        </tr>
+                        <tr>
+                            <td>Harga Pupuk Global</td>
+                            <td>
+                                <div
+                                    style="width: 100%; background-color: var(--border-color); border-radius: 4px; height: 8px; margin-top: 5px; overflow: hidden;">
+                                    <div
+                                        style="width: 30%; background-color: #f59e0b; height: 100%; border-radius: 4px;">
+                                    </div>
+                                </div>
+                                <span style="font-size: 12px; color: var(--text-light);">30%</span>
+                            </td>
+                            <td>Stabil Tinggi</td>
+                            <td><span style="color: var(--text-light);"><i class="fa-solid fa-minus"></i> Netral</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Biaya Transportasi (BBM)</td>
+                            <td>
+                                <div
+                                    style="width: 100%; background-color: var(--border-color); border-radius: 4px; height: 8px; margin-top: 5px; overflow: hidden;">
+                                    <div
+                                        style="width: 15%; background-color: #3b82f6; height: 100%; border-radius: 4px;">
+                                    </div>
+                                </div>
+                                <span style="font-size: 12px; color: var(--text-light);">15%</span>
+                            </td>
+                            <td>Stabil</td>
+                            <td><span style="color: var(--text-light);"><i class="fa-solid fa-minus"></i> Netral</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Permintaan Musiman (Hari Raya)</td>
+                            <td>
+                                <div
+                                    style="width: 100%; background-color: var(--border-color); border-radius: 4px; height: 8px; margin-top: 5px; overflow: hidden;">
+                                    <div
+                                        style="width: 10%; background-color: #10b981; height: 100%; border-radius: 4px;">
+                                    </div>
+                                </div>
+                                <span style="font-size: 12px; color: var(--text-light);">10%</span>
+                            </td>
+                            <td>Rendah (Pasca Lebaran)</td>
+                            <td><span style="color: var(--primary-dark);"><i class="fa-solid fa-arrow-trend-down"></i>
+                                    Menekan Harga</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="pasar-view" class="view-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h1 class="page-title" style="margin-bottom: 0;">Peta Supply Hotspots Komoditas</h1>
+                <span
+                    style="font-size: 12px; background: #e2e8f0; color: #475569; padding: 4px 8px; border-radius: 4px;"><i
+                        class="fa-solid fa-map-location-dot"></i> Powered by Leaflet JS</span>
+            </div>
+
+            <div class="card"
+                style="padding: 0; overflow: hidden; height: 500px; display: flex; flex-direction: column;">
+                <div
+                    style="padding: 15px 20px; background: #f8fafc; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; z-index: 1;">
+                    <p style="font-size: 14px; color: var(--text-light); margin: 0;">Pemetaan presisi lokasi petani
+                        mitra dan sentra komoditas *real-time*.</p>
+                    <select id="map-filter" style="padding: 4px 10px; font-size: 12px;">
+                        <option value="all">Semua Komoditas</option>
+                        <option value="cabai">Sentra Cabai</option>
+                        <option value="bawang">Sentra Bawang</option>
+                    </select>
+                </div>
+                <div id="map" style="flex: 1; width: 100%;"></div>
+            </div>
+        </section>
+
+        <!-- FITUR BERITA AGRIKULTUR -->
+        <section id="berita-view" class="view-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div>
+                    <h1 class="page-title" style="margin-bottom: 5px;">Berita & Update Agrikultur</h1>
+                    <p style="color: var(--text-light); font-size: 14px; margin: 0;">Informasi terkini mengenai cuaca, kebijakan, dan komoditas.</p>
+                </div>
+                <div>
+                    <select id="news-filter" style="padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); outline: none;">
+                        <option value="terbaru">Terbaru</option>
+                        <option value="populer">Populer</option>
+                        <option value="kebijakan">Kebijakan Pemerintah</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Grid Layout untuk Berita -->
+            <div id="news-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+                <!-- Card Berita akan dimasukkan ke sini oleh JavaScript -->
+            </div>
+        </section>
+        <!-- END FITUR BERITA -->
+
+        <section id="profil-view" class="view-section">
+            <h1 class="page-title" style="text-align: center;">Pengaturan Profil</h1>
+            <div class="card" style="max-width: 600px; margin: 0 auto;">
+                <h2 class="card-title">Informasi UMKM</h2>
+                <form id="profile-form" style="margin-top: 20px; display: flex; flex-direction: column; gap: 15px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">Nama
+                            UMKM</label>
+                        <input type="text" id="profil-nama" value="Sambal Bu Rudy (UMKM)"
+                            style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; outline: none; transition: border-color 0.3s;"
+                            onfocus="this.style.borderColor='var(--primary)'"
+                            onblur="this.style.borderColor='var(--border-color)'" required>
+                    </div>
+                    <div>
+                        <label
+                            style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">Email</label>
+                        <input type="email" id="profil-email" value="kontak@burudy.com"
+                            style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; outline: none; transition: border-color 0.3s;"
+                            onfocus="this.style.borderColor='var(--primary)'"
+                            onblur="this.style.borderColor='var(--border-color)'" required>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">Nomor
+                            Telepon</label>
+                        <input type="text" id="profil-telp" value="081234567890"
+                            style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; outline: none; transition: border-color 0.3s;"
+                            onfocus="this.style.borderColor='var(--primary)'"
+                            onblur="this.style.borderColor='var(--border-color)'">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">Alamat
+                            Usaha</label>
+                        <textarea id="profil-alamat" rows="3"
+                            style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; outline: none; transition: border-color 0.3s; resize: vertical;"
+                            onfocus="this.style.borderColor='var(--primary)'"
+                            onblur="this.style.borderColor='var(--border-color)'">Jl. Raya Gubeng No. 123, Surabaya</textarea>
+                    </div>
+                    <div style="margin-top: 10px; display: flex; gap: 10px;">
+                        <button type="submit" class="btn-action" style="width: 100%;"><i class="fa-solid fa-save"></i>
+                            Simpan Perubahan</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
