@@ -286,17 +286,20 @@ td {
 /* For Tablets and Smaller Devices (Max Width: 992px) */
 @media (max-width: 992px) {
     .content-grid {
-        grid-template-columns: 1fr; /* Tumpuk table dan chart vertikal */
+        grid-template-columns: 1fr;
+        /* Tumpuk table dan chart vertikal */
     }
 }
 
 /* For Smartphones (Max Width: 768px) */
 @media (max-width: 768px) {
     body {
-        flex-direction: column; /* Tumpuk sidebar di atas main-content sementara (bisa dihide) */
+        flex-direction: column;
+        /* Tumpuk sidebar di atas main-content sementara (bisa dihide) */
         height: auto;
         min-height: 100vh;
-        overflow-y: auto; /* Izinkan scroll body pada mobile */
+        overflow-y: auto;
+        /* Izinkan scroll body pada mobile */
     }
 
     .sidebar {
@@ -319,6 +322,7 @@ td {
     .nav-menu::-webkit-scrollbar {
         height: 6px;
     }
+
     .nav-menu::-webkit-scrollbar-thumb {
         background-color: var(--border-color);
         border-radius: 4px;
@@ -337,7 +341,8 @@ td {
     }
 
     .main-content {
-        overflow-y: visible; /* Scroll ikut body */
+        overflow-y: visible;
+        /* Scroll ikut body */
     }
 
     .header {
@@ -346,18 +351,20 @@ td {
         gap: 15px;
         align-items: flex-start;
     }
-    
+
     .search-bar {
         width: 100%;
         text-align: center;
     }
+
     .user-profile {
         width: 100%;
         justify-content: space-between;
     }
 
     .kpi-grid {
-        grid-template-columns: 1fr; /* KPI ditumpuk 1 per 1 vertikal */
+        grid-template-columns: 1fr;
+        /* KPI ditumpuk 1 per 1 vertikal */
         gap: 15px;
     }
 
@@ -376,27 +383,30 @@ td {
         padding: 15px;
         overflow-x: auto;
     }
-    
+
     table {
-        min-width: 500px; /* Force min width untuk scroll horizontal */
+        min-width: 500px;
+        /* Force min width untuk scroll horizontal */
     }
 
     /* Peta mapbox/leaflet resizer viewport */
     #pasar-view .card {
-        height: 400px !important; /* Kurangi tinggi peta di HP */
+        height: 400px !important;
+        /* Kurangi tinggi peta di HP */
     }
 
     /* Grid Berita Agrikultur Mobile */
     #news-container {
-        grid-template-columns: 1fr !important; /* 1 Card berita per baris */
+        grid-template-columns: 1fr !important;
+        /* 1 Card berita per baris */
     }
 
-    #berita-view > div:first-child {
+    #berita-view>div:first-child {
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
     }
-    
+
     #news-filter {
         width: 100%;
     }
