@@ -2,7 +2,8 @@
     "build": {
         "builder": "NIXPACKS",
         "env": {
-            "NODE_VERSION": "20"
+            "NODE_VERSION": "20",
+            "NIXPACKS_METADATA": "backend_laravel"
         }
     },
     "deploy": {
