@@ -5,22 +5,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AgriPredict Dashboard</title>
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="style.css">
+    <!-- Boxicons for Icons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 
 <body>
     <div class="dashboard-container">
-        <aside class="sidebar" id="sidebar">
-            <div class="logo" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
                 <img src="Logo Agripredict.jpg" alt="Logo AgriPredict"
-                    style="height: 100px; width: auto; max-width: 80%;">
-                <i class='bx bx-x close-btn' id="close-btn"
-                    style="display: none; font-size: 2rem; cursor: pointer; color: var(--text-main);"></i>
+                    style="height: 100px; width: auto; max-width: 100%;">
             </div>
 
             <ul class="nav-links">
@@ -34,31 +36,24 @@
             </ul>
         </aside>
 
+        <!-- Main Content -->
         <main class="main-content">
-            <header style="display: flex; align-items: center; gap: 1rem;">
-                <button id="mobile-menu-btn" class="menu-toggle" aria-label="Buka Menu"
-                    style="display: none; background: none; border: none; font-size: 1.8rem; cursor: pointer; color: var(--primary-color);">
-                    <i class='bx bx-menu'></i>
-                </button>
-
-                <div class="search-bar" style="flex-grow: 1;">
+            <!-- Header -->
+            <header>
+                <div class="search-bar">
                     <i class='bx bx-search'></i>
                     <input type="text" placeholder="Search insights...">
                 </div>
-
-                <div class="user-profile" style="display: flex; align-items: center; gap: 1rem;">
-                    <select id="roleSelect" onchange="switchRole()" class="form-control role-select"
+                <div class="user-profile">
+                    <select id="roleSelect" onchange="switchRole()" class="form-control"
                         style="padding: 0.35rem 0.5rem; font-size: 0.85rem; width: auto; background-color: var(--primary-light); color: var(--primary-color); border:none; font-weight:600;">
                         <option value="petani">👨‍🌾 Mode Petani</option>
                         <option value="pemerintah">🏛️ Mode Pemerintah</option>
                     </select>
                     <div class="notifications"><i class='bx bx-bell'></i></div>
-
-                    <div class="profile-info" style="display: flex; align-items: center; gap: 0.5rem;">
-                        <img src="https://ui-avatars.com/api/?name=Petani+GenZ&background=9FE400&color=fff"
-                            alt="User Avatar" style="width: 35px; border-radius: 50%;">
-                        <span class="user-name">Petani Gen Z</span>
-                    </div>
+                    <img src="https://ui-avatars.com/api/?name=Petani+GenZ&background=9FE400&color=fff"
+                        alt="User Avatar">
+                    <span>Petani Gen Z</span>
                 </div>
             </header>
 
@@ -68,31 +63,33 @@
                     <p>Real-time agricultural intelligence and smart matching.</p>
                 </div>
 
+                <!-- KPI Cards (Mocked from Laravel) -->
                 <div class="kpi-grid">
                     <div class="kpi-card interactive-card" onclick="showKpiDetail('kenaikan')">
                         <div class="kpi-icon"><i class='bx bx-trending-up'></i></div>
                         <div class="kpi-info">
                             <span class="kpi-label">Potensi Kenaikan Harga</span>
-                            <span class="kpi-value" id="kpi-kenaikan">12.5%</span>
+                            <span class="kpi-value" id="kpi-kenaikan">--%</span>
                         </div>
                     </div>
                     <div class="kpi-card interactive-card" onclick="showKpiDetail('penghematan')">
                         <div class="kpi-icon"><i class='bx bx-wallet'></i></div>
                         <div class="kpi-info">
                             <span class="kpi-label">Penghematan Logistik</span>
-                            <span class="kpi-value" id="kpi-penghematan">Rp 2.4JT</span>
+                            <span class="kpi-value" id="kpi-penghematan">Rp --</span>
                         </div>
                     </div>
                     <div class="kpi-card interactive-card" onclick="showKpiDetail('kontrak')">
                         <div class="kpi-icon"><i class='bx bx-file'></i></div>
                         <div class="kpi-info">
                             <span class="kpi-label">Kontrak Pasokan Aktif</span>
-                            <span class="kpi-value" id="kpi-kontrak">4</span>
+                            <span class="kpi-value" id="kpi-kontrak">--</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="main-grid">
+                    <!-- Chart Section (Mocked from FastAPI Holt-Winters) -->
                     <div class="chart-container glass-panel">
                         <div class="panel-header">
                             <h3>Prediksi Harga Komoditas (Holt-Winters)</h3>
@@ -106,12 +103,14 @@
                             <canvas id="predictionChart"></canvas>
                         </div>
                         <div class="accuracy-badge">
-                            MAPE Accuracy: <span id="mapeValue">94.8%</span>
+                            MAPE Accuracy: <span id="mapeValue">--%</span>
                         </div>
                         <div id="actionableInsight" class="alert mt-3" style="display: none;">
+                            <!-- Injected by JS -->
                         </div>
                     </div>
 
+                    <!-- Smart Matching Table (Mocked from Laravel) -->
                     <div class="table-container glass-panel">
                         <div class="panel-header">
                             <h3>Rekomendasi Smart Matching</h3>
@@ -140,7 +139,10 @@
                 </div>
             </div>
 
+            <!-- Other Views -->
             <div id="market" class="content-wrapper view-section">
+
+                <!-- Farmer Locked View -->
                 <div class="farmer-only"
                     style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:60vh; text-align:center;">
                     <i class='bx bxs-lock-alt'
@@ -153,6 +155,7 @@
                         Dashboard</button>
                 </div>
 
+                <!-- Government View -->
                 <div class="gov-only">
                     <div class="page-title">
                         <h1>Market Trends</h1>
@@ -178,16 +181,14 @@
                         </div>
                     </div>
 
+                    <!-- Peta Panas (Regional Status Grid) -->
                     <div class="glass-panel" style="margin-bottom: 1rem;">
                         <div class="panel-header">
-                            <h3><i class='bx bxs-map' style="color:var(--accent-color);"></i> Peta Panas: Status Pasokan
-                                Wilayah</h3>
-                            <button class="btn-primary btn-sm"
-                                style="background-color: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color);"><i
-                                    class='bx bx-filter'></i> Filter Komoditas</button>
+                            <h3><i class='bx bxs-map' style="color:var(--accent-color);"></i> Peta Panas: Status Pasokan Wilayah</h3>
+                            <button class="btn-primary btn-sm" style="background-color: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color);"><i class='bx bx-filter'></i> Filter Komoditas</button>
                         </div>
-                        <div class="kpi-grid" id="heatmapGrid"
-                            style="gap:1rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                        <div class="kpi-grid" id="heatmapGrid" style="gap:1rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                            <!-- Populated by JS -->
                         </div>
                     </div>
 
@@ -220,10 +221,8 @@
 
                         <div class="glass-panel" style="grid-column: 1 / -1; margin-top: 1rem;">
                             <div class="panel-header">
-                                <h3><i class='bx bx-line-chart-down' style="color:var(--danger-color);"></i> Watchlist:
-                                    Peringatan Volatilitas & Inflasi</h3>
-                                <button class="btn-primary btn-sm"><i class='bx bxs-file-pdf'></i> Export
-                                    Laporan</button>
+                                <h3><i class='bx bx-line-chart-down' style="color:var(--danger-color);"></i> Watchlist: Peringatan Volatilitas & Inflasi</h3>
+                                <button class="btn-primary btn-sm"><i class='bx bxs-file-pdf'></i> Export Laporan</button>
                             </div>
                             <div class="table-responsive">
                                 <table class="matching-table">
@@ -262,6 +261,7 @@
                         </div>
                         <div id="planning-alerts"></div>
                         <div id="planting-recommendations" class="planning-cards mt-3">
+                            <!-- Cards will be generated by JS -->
                         </div>
                     </div>
 
@@ -291,6 +291,7 @@
                     <p>Pantau pengiriman dan temukan peluang konsolidasi muatan untuk menekan ongkos kirim.</p>
                 </div>
 
+                <!-- Shared Load Banner -->
                 <div class="alert alert-success mt-3 mb-4 farmer-only"
                     style="display: flex; align-items: center; justify-content: space-between;">
                     <div>
@@ -305,6 +306,7 @@
                 </div>
 
                 <div class="main-grid">
+                    <!-- Standard Logistics Table -->
                     <div class="glass-panel" style="grid-column: 1 / -1;">
                         <div class="panel-header">
                             <h3>Status Pengiriman Terjadwal</h3>
@@ -326,6 +328,7 @@
                                     </tr>
                                 </thead>
                                 <tbody id="logisticsTableBody">
+                                    <!-- Generated by JS -->
                                 </tbody>
                             </table>
                         </div>
@@ -400,6 +403,7 @@
         </main>
     </div>
 
+    <!-- Application Logic -->
     <script src="script.js"></script>
 </body>
 
