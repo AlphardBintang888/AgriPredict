@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriPredict Dashboard</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <!-- Boxicons for Icons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="Logo Agripredict.jpg" alt="Logo AgriPredict"
+                    style="height: 100px; width: auto; max-width: 100%;">
+            </div>
+
+            <ul class="nav-links">
+                <li class="active" data-target="dashboard"><a href="#"><i class='bx bx-grid-alt'></i> Dashboard</a></li>
+                <li data-target="market" class="gov-only-nav"><a href="#"><i class='bx bx-line-chart'></i> Market Trends
+                        <i class='bx bxs-lock-alt gov-lock-icon' style="font-size:0.8rem; margin-left:auto;"></i></a>
+                </li>
+                <li data-target="planning"><a href="#"><i class='bx bx-leaf'></i> Crop Planning</a></li>
+                <li data-target="logistics"><a href="#"><i class='bx bx-buildings'></i> Logistics</a></li>
+                <li data-target="settings"><a href="#"><i class='bx bx-cog'></i> Settings</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header>
+                <div class="search-bar">
+                    <i class='bx bx-search'></i>
+                    <input type="text" placeholder="Search insights...">
+                </div>
+                <div class="user-profile">
+                    <select id="roleSelect" onchange="switchRole()" class="form-control"
+                        style="padding: 0.35rem 0.5rem; font-size: 0.85rem; width: auto; background-color: var(--primary-light); color: var(--primary-color); border:none; font-weight:600;">
+                        <option value="petani">👨‍🌾 Mode Petani</option>
+                        <option value="pemerintah">🏛️ Mode Pemerintah</option>
+                    </select>
+                    <div class="notifications"><i class='bx bx-bell'></i></div>
+                    <img src="https://ui-avatars.com/api/?name=Petani+GenZ&background=9FE400&color=fff"
+                        alt="User Avatar">
+                    <span>Petani Gen Z</span>
+                </div>
+            </header>
+
+            <div id="dashboard" class="content-wrapper view-section active">
+                <div class="page-title">
+                    <h1>Dashboard Overview</h1>
+                    <p>Real-time agricultural intelligence and smart matching.</p>
+                </div>
+
+                <!-- KPI Cards (Mocked from Laravel) -->
+                <div class="kpi-grid">
+                    <div class="kpi-card interactive-card" onclick="showKpiDetail('kenaikan')">
+                        <div class="kpi-icon"><i class='bx bx-trending-up'></i></div>
+                        <div class="kpi-info">
+                            <span class="kpi-label">Potensi Kenaikan Harga</span>
+                            <span class="kpi-value" id="kpi-kenaikan">--%</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card interactive-card" onclick="showKpiDetail('penghematan')">
+                        <div class="kpi-icon"><i class='bx bx-wallet'></i></div>
+                        <div class="kpi-info">
+                            <span class="kpi-label">Penghematan Logistik</span>
+                            <span class="kpi-value" id="kpi-penghematan">Rp --</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card interactive-card" onclick="showKpiDetail('kontrak')">
+                        <div class="kpi-icon"><i class='bx bx-file'></i></div>
+                        <div class="kpi-info">
+                            <span class="kpi-label">Kontrak Pasokan Aktif</span>
+                            <span class="kpi-value" id="kpi-kontrak">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="main-grid">
+                    <!-- Chart Section (Mocked from FastAPI Holt-Winters) -->
+                    <div class="chart-container glass-panel">
+                        <div class="panel-header">
+                            <h3>Prediksi Harga Komoditas (Holt-Winters)</h3>
+                            <select id="commoditySelect" onchange="updateChart()">
+                                <option value="cabai">Cabai Rawit</option>
+                                <option value="bawang">Bawang Merah</option>
+                                <option value="beras">Beras</option>
+                            </select>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="predictionChart"></canvas>
+                        </div>
+                        <div class="accuracy-badge">
+                            MAPE Accuracy: <span id="mapeValue">--%</span>
+                        </div>
+                        <div id="actionableInsight" class="alert mt-3" style="display: none;">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Smart Matching Table (Mocked from Laravel) -->
+                    <div class="table-container glass-panel">
+                        <div class="panel-header">
+                            <h3>Rekomendasi Smart Matching</h3>
+                            <button class="btn-primary">View All</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="matching-table">
+                                <thead>
+                                    <tr>
+                                        <th>Petani / Vendor</th>
+                                        <th>Lokasi</th>
+                                        <th>Komoditas</th>
+                                        <th>Est. Harga</th>
+                                        <th>Alasan Kecocokan</th>
+                                        <th>Status Match</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="matchingTableBody">
+                                    <tr>
+                                        <td colspan="6" class="loading">Memuat data...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other Views -->
+            <div id="market" class="content-wrapper view-section">
+
+                <!-- Farmer Locked View -->
+                <div class="farmer-only"
+                    style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:60vh; text-align:center;">
+                    <i class='bx bxs-lock-alt'
+                        style="font-size: 4rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+                    <h2 style="margin-bottom: 0.5rem;">Akses Terbatas</h2>
+                    <p style="color: var(--text-muted); max-width: 400px;">Data agregat tren pasar nasional dan korelasi
+                        inflasi hanya tersedia untuk akun Pemerintah / Kementan.</p>
+                    <button class="btn-primary" style="margin-top: 1.5rem;"
+                        onclick="document.querySelector('[data-target=\'dashboard\']').click()">Kembali ke
+                        Dashboard</button>
+                </div>
+
+                <!-- Government View -->
+                <div class="gov-only">
+                    <div class="page-title">
+                        <h1>Market Trends</h1>
+                        <p>Analisis makro untuk pergerakan harga dan pasokan nasional.</p>
+                    </div>
+
+                    <div class="kpi-grid gov-focus">
+                        <div class="kpi-card">
+                            <div class="kpi-icon" style="background-color:#dbeafe; color:#2563eb;"><i
+                                    class='bx bx-trending-up'></i></div>
+                            <div class="kpi-info">
+                                <span class="kpi-label">Inflasi Pangan (MoM)</span>
+                                <span class="kpi-value">+1.2%</span>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon" style="background-color:#fee2e2; color:var(--danger-color);"><i
+                                    class='bx bx-package'></i></div>
+                            <div class="kpi-info">
+                                <span class="kpi-label">Defisit Pasokan Wilayah</span>
+                                <span class="kpi-value">3 Provinsi</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Peta Panas (Regional Status Grid) -->
+                    <div class="glass-panel" style="margin-bottom: 1rem;">
+                        <div class="panel-header">
+                            <h3><i class='bx bxs-map' style="color:var(--accent-color);"></i> Peta Panas: Status Pasokan Wilayah</h3>
+                            <button class="btn-primary btn-sm" style="background-color: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color);"><i class='bx bx-filter'></i> Filter Komoditas</button>
+                        </div>
+                        <div class="kpi-grid" id="heatmapGrid" style="gap:1rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <div class="main-grid">
+                        <div class="glass-panel" style="grid-column: 1 / -1;">
+                            <div class="panel-header">
+                                <h3>Tren Pergerakan Harga Historis</h3>
+                                <select class="form-control" style="width:auto; padding:0.25rem 0.5rem;"
+                                    id="trendTimeFilter" onchange="updateMarketCharts()">
+                                    <option value="1M">1 Bulan Terakhir</option>
+                                    <option value="3M">3 Bulan Terakhir</option>
+                                    <option value="1Y">1 Tahun Terakhir</option>
+                                </select>
+                            </div>
+                            <div class="chart-wrapper">
+                                <canvas id="historicalTrendChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="glass-panel" style="grid-column: 1 / -1; margin-top: 1rem;">
+                            <div class="panel-header">
+                                <h3>Korelasi Harga & Volume Pasokan (Mitigasi Inflasi)</h3>
+                                <p style="font-size:0.85rem; color:var(--text-muted); font-weight:normal;">Menganalisis
+                                    anomali kelangkaan stok penyebab lonjakan harga.</p>
+                            </div>
+                            <div class="chart-wrapper">
+                                <canvas id="correlationChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="glass-panel" style="grid-column: 1 / -1; margin-top: 1rem;">
+                            <div class="panel-header">
+                                <h3><i class='bx bx-line-chart-down' style="color:var(--danger-color);"></i> Watchlist: Peringatan Volatilitas & Inflasi</h3>
+                                <button class="btn-primary btn-sm"><i class='bx bxs-file-pdf'></i> Export Laporan</button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="matching-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Komoditas</th>
+                                            <th>Harga Rata-Rata (Nasional)</th>
+                                            <th>Batas HET Pemerintah</th>
+                                            <th>Deviasi Harga</th>
+                                            <th>Status Intervensi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="watchlistTableBody">
+                                        <tr>
+                                            <td colspan="5" class="loading">Inisialisasi algoritma pengawasan...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="planning" class="content-wrapper view-section">
+                <div class="page-title">
+                    <h1>Crop Planning</h1>
+                    <p>Rencanakan masa tanam yang optimal berdasarkan kalender tanam dan cuaca.</p>
+                </div>
+
+                <div class="main-grid">
+                    <div class="glass-panel">
+                        <div class="panel-header">
+                            <h3>Rekomendasi Tanam Bulan Ini</h3>
+                            <button class="btn-primary" onclick="generatePlantingRecommendation()">Refresh API</button>
+                        </div>
+                        <div id="planning-alerts"></div>
+                        <div id="planting-recommendations" class="planning-cards mt-3">
+                            <!-- Cards will be generated by JS -->
+                        </div>
+                    </div>
+
+                    <div class="glass-panel">
+                        <div class="panel-header">
+                            <h3>Prakiraan Cuaca Lokal</h3>
+                        </div>
+                        <div class="weather-widget">
+                            <div class="weather-current">
+                                <i class='bx bx-sun'></i>
+                                <h2>32°C</h2>
+                                <p>Cerah Berawan</p>
+                            </div>
+                            <div class="weather-details">
+                                <div class="w-detail"><span>Kelembapan</span><span>65%</span></div>
+                                <div class="w-detail"><span>Curah Hujan</span><span>0 mm</span></div>
+                                <div class="w-detail"><span>Angin</span><span>12 km/h</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="logistics" class="content-wrapper view-section">
+                <div class="page-title">
+                    <h1>Logistics & Shared Load</h1>
+                    <p>Pantau pengiriman dan temukan peluang konsolidasi muatan untuk menekan ongkos kirim.</p>
+                </div>
+
+                <!-- Shared Load Banner -->
+                <div class="alert alert-success mt-3 mb-4 farmer-only"
+                    style="display: flex; align-items: center; justify-content: space-between;">
+                    <div>
+                        <h4 style="margin-bottom:0.25rem;"><i class='bx bx-car'></i> Peluang Konsolidasi Muatan (Shared
+                            Load) Ditemukan!</h4>
+                        <p style="font-size: 0.9rem; margin:0;">Truk AgroExpress B-1234-XX dari desamu menuju Jakarta
+                            masih memiliki sisa kapasitas 2 Ton. Bergabung sekarang untuk menghemat ongkir hingga 40%.
+                        </p>
+                    </div>
+                    <button class="btn-primary" style="background-color: var(--primary-hover); color: white;">Gabung
+                        Muatan</button>
+                </div>
+
+                <div class="main-grid">
+                    <!-- Standard Logistics Table -->
+                    <div class="glass-panel" style="grid-column: 1 / -1;">
+                        <div class="panel-header">
+                            <h3>Status Pengiriman Terjadwal</h3>
+                            <div class="search-bar" style="width:250px; padding:0.25rem 0.75rem;">
+                                <i class='bx bx-search'></i>
+                                <input type="text" id="logisticsSearch" placeholder="Cari Resi atau Rute..."
+                                    onkeyup="filterLogistics()">
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="matching-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID Pengiriman</th>
+                                        <th>Rute (Asal &rarr; Tujuan)</th>
+                                        <th>Mitra / Tipe</th>
+                                        <th>Est. Tiba</th>
+                                        <th>Status Pengiriman</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="logisticsTableBody">
+                                    <!-- Generated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="settings" class="content-wrapper view-section">
+                <div class="page-title">
+                    <h1>Settings</h1>
+                    <p>Atur preferensi akun dan sistem kamu.</p>
+                </div>
+                <div class="main-grid">
+                    <div class="glass-panel">
+                        <h3 style="margin-bottom:1rem;">Theme Settings</h3>
+                        <div class="setting-item">
+                            <div>
+                                <strong>Dark Mode</strong>
+                                <p style="color:var(--text-muted); font-size:0.85rem;">Alihkan antarmuka ke mode gelap
+                                </p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="themeToggle" onchange="toggleTheme()">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+
+                        <h3 style="margin-bottom:1rem; margin-top:2rem;">Notifications</h3>
+                        <div class="setting-item">
+                            <div>
+                                <strong>Push Notifications</strong>
+                                <p style="color:var(--text-muted); font-size:0.85rem;">Terima peringatan harga dan cuaca
+                                </p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" checked>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel">
+                        <h3 style="margin-bottom:1.5rem;">Profile Settings</h3>
+                        <div class="profile-edit">
+                            <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem;">
+                                <img src="https://ui-avatars.com/api/?name=Petani+Milenial&background=0D8A5E&color=fff"
+                                    alt="User Avatar" style="width:60px; height:60px; border-radius:50%;">
+                                <button class="btn-primary">Ganti Foto</button>
+                            </div>
+                            <div class="form-group">
+                                <label>Nama Lengkap</label>
+                                <input type="text" class="form-control" value="Petani Milenial">
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" class="form-control" value="petani@agripredict.id">
+                            </div>
+                            <div class="form-group">
+                                <label>Wilayah Operasi</label>
+                                <select class="form-control" style="width:100%;">
+                                    <option>Jawa Timur</option>
+                                    <option>Jawa Tengah</option>
+                                    <option>Jawa Barat</option>
+                                </select>
+                            </div>
+                            <button class="btn-primary" style="width:100%; margin-top:1rem;"
+                                onclick="saveSettings()">Simpan Perubahan</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Application Logic -->
+    <script src="script.js"></script>
+</body>
+
+</html>
